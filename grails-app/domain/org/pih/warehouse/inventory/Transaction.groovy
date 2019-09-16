@@ -11,13 +11,13 @@ package org.pih.warehouse.inventory
 
 import org.pih.warehouse.auth.AuthService
 import org.pih.warehouse.core.Constants
-import org.pih.warehouse.core.Location
-import org.pih.warehouse.core.User
 import org.pih.warehouse.jobs.RefreshInventorySnapshotJob
-import org.pih.warehouse.order.Order
-import org.pih.warehouse.receiving.Receipt
 import org.pih.warehouse.requisition.Requisition
 import org.pih.warehouse.shipping.Shipment
+import org.pih.warehouse.core.Location
+import org.pih.warehouse.core.User
+import org.pih.warehouse.order.Order
+import org.pih.warehouse.receiving.Receipt
 
 /**
  *  Represents a unit of work completed within a single warehouse.  A
@@ -51,17 +51,18 @@ class Transaction implements Comparable, Serializable {
         }
     }
 
-    def publishPersistenceEvent = {
-        publishEvent(new TransactionEvent(this))
+    def triggerRefreshInventorySnapshotJob = {
+        RefreshInventorySnapshotJob.triggerNow([startDate: transactionDate, location: inventory?.warehouse?.id])
     }
 
-    // ID won't be available until after the record is inserted
-    def afterInsert = publishPersistenceEvent
 
-    def afterUpdate = publishPersistenceEvent
+    // ID won't be available until after the record is inserted
+    def afterInsert = triggerRefreshInventorySnapshotJob
+
+    def afterUpdate = triggerRefreshInventorySnapshotJob
 
     // This probably needs to be "before" since the transaction will not be around after
-    def afterDelete = publishPersistenceEvent
+    def afterDelete = triggerRefreshInventorySnapshotJob
 
     String id
     TransactionType transactionType

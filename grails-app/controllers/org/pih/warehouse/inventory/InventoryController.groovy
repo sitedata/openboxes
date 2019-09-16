@@ -18,13 +18,12 @@ import org.apache.commons.collections.FactoryUtils
 import org.apache.commons.collections.list.LazyList
 import org.apache.commons.lang.StringEscapeUtils
 import org.pih.warehouse.core.Constants
-import org.pih.warehouse.core.Location
 import org.pih.warehouse.core.Tag
 import org.pih.warehouse.core.User
 import org.pih.warehouse.importer.InventoryExcelImporter
-import org.pih.warehouse.product.Category
 import org.pih.warehouse.product.Product
 import org.pih.warehouse.util.DateUtil
+import org.pih.warehouse.core.Location
 import org.springframework.web.multipart.MultipartHttpServletRequest
 import org.springframework.web.multipart.commons.CommonsMultipartFile
 
@@ -278,11 +277,7 @@ class InventoryController {
                 for (date in command?.dates) {
                     println "Get quantity map " + date + " location = " + location
                     def quantityMap = [:]
-                    def revisedDate = date
-                    use(TimeCategory) {
-                        revisedDate = revisedDate.plus(1.day)
-                    }
-                    quantityMap = inventoryService.getQuantityOnHandAsOfDate(location, revisedDate, command.tags)
+                    quantityMap = inventoryService.getQuantityOnHandAsOfDate(location, date, command.tags)
                     def existingQuantityMap = quantityMapByDate[date]
                     if (existingQuantityMap) {
                         quantityMapByDate[date] = mergeQuantityMap(existingQuantityMap, quantityMap)

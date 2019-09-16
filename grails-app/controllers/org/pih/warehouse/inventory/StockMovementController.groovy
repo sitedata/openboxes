@@ -14,15 +14,16 @@ import grails.converters.JSON
 import org.grails.plugins.csv.CSVWriter
 import org.pih.warehouse.api.StockMovement
 import org.pih.warehouse.api.StockMovementItem
-import org.pih.warehouse.core.Document
+import org.pih.warehouse.core.*
+import org.pih.warehouse.importer.ImportDataCommand
 import org.pih.warehouse.core.DocumentCommand
 import org.pih.warehouse.core.DocumentType
-import org.pih.warehouse.core.Location
 import org.pih.warehouse.core.User
-import org.pih.warehouse.importer.ImportDataCommand
 import org.pih.warehouse.requisition.Requisition
 import org.pih.warehouse.shipping.Shipment
 import org.pih.warehouse.shipping.ShipmentStatusCode
+import org.pih.warehouse.core.Document
+import org.pih.warehouse.core.Location
 
 class StockMovementController {
 
@@ -138,11 +139,8 @@ class StockMovementController {
             render(contentType: "text/csv", text: sw.toString(), encoding: "UTF-8")
         }
 
-        if (params.submitted) {
-            flash.message = "${warehouse.message(code:'request.submitMessage.label')} ${params.movementNumber}"
-        }
-
         render(view: "list", params: params, model: [stockMovements: stockMovements, statistics: statistics, incoming: incoming])
+
     }
 
     def rollback = {

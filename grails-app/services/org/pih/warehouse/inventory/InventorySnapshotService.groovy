@@ -25,7 +25,6 @@ class InventorySnapshotService {
     boolean transactional = true
 
     def dataSource
-    def locationService
     def inventoryService
     def persistenceInterceptor
 
@@ -44,7 +43,6 @@ class InventorySnapshotService {
         // Compute bin locations from transaction entries for given location and date
         // Uses GPars to improve performance
         GParsPool.withPool {
-            def depotLocations = locationService.getDepots()
             results = depotLocations.collectParallel { Location loc ->
                 def innerStartTime = System.currentTimeMillis()
                 persistenceInterceptor.init()
@@ -227,6 +225,12 @@ class InventorySnapshotService {
         """
         return TransactionEntry.executeQuery(query, [product: product, inventory: location.inventory])
     }
+
+    def getDepotLocations() {
+        def locations = Location.findAll("from Location as l where l.inventory is not null")
+        return locations.findAll { it.isWarehouse() }
+    }
+
 
     def findInventorySnapshotByLocation(Location location) {
         def date = getMostRecentInventorySnapshotDate()
@@ -533,21 +537,6 @@ class InventorySnapshotService {
             }
         }
         return data
-    }
-
-    List getQuantityOnHandBetweenDates(Product product, Location location, Date startDate, Date endDate) {
-        return InventorySnapshot.createCriteria().list() {
-            projections {
-                groupProperty("date")
-                groupProperty("location")
-                groupProperty("product")
-                sum("quantityOnHand", "quantityOnHand")
-            }
-            eq("product", product)
-            eq("location", location)
-            between("date", startDate, endDate)
-            order("date", "asc")
-        }
     }
 
 }

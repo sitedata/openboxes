@@ -12,18 +12,19 @@ package org.pih.warehouse
 import grails.converters.JSON
 import grails.plugin.springcache.annotations.CacheFlush
 import grails.plugin.springcache.annotations.Cacheable
-import groovy.time.TimeCategory
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.pih.warehouse.core.*
+import org.pih.warehouse.core.Localization
+import org.pih.warehouse.core.Location
+import org.pih.warehouse.core.Person
+import org.pih.warehouse.core.Tag
+import org.pih.warehouse.core.User
 import org.pih.warehouse.inventory.InventoryItem
 import org.pih.warehouse.inventory.InventorySnapshot
 import org.pih.warehouse.inventory.InventoryStatus
 import org.pih.warehouse.inventory.Transaction
-import org.pih.warehouse.jobs.CalculateHistoricalQuantityJob
-import org.pih.warehouse.jobs.SendStockAlertsJob
 import org.pih.warehouse.order.Order
 import org.pih.warehouse.order.OrderItem
-import org.pih.warehouse.product.Category
 import org.pih.warehouse.product.Product
 import org.pih.warehouse.product.ProductGroup
 import org.pih.warehouse.product.ProductPackage
@@ -35,7 +36,6 @@ import org.pih.warehouse.requisition.RequisitionItem
 import org.pih.warehouse.requisition.RequisitionItemSortByCode
 import org.pih.warehouse.shipping.Container
 import org.pih.warehouse.shipping.Shipment
-import org.pih.warehouse.util.LocalizationUtil
 import org.quartz.JobKey
 import org.quartz.impl.StdScheduler
 
@@ -1230,24 +1230,123 @@ class JsonController {
         render([url: url, type: type, barcode: barcode] as JSON)
     }
 
+    /**
+     * Stock Card > Snapshot graph
+     */
     def getQuantityOnHandByMonth = {
         log.info params
+        def dates = []
+        def format = "MMM-yy"
         def numMonths = (params.numMonths as int) ?: 12
         def location = Location.get(params.location.id)
         def product = Product.get(params.product.id)
-        def endDate = new Date(), startDate = new Date()
-        use(TimeCategory) { startDate = startDate - numMonths.months }
 
-        // Retrieve and transform data for time-series graph
-        def data = inventorySnapshotService.getQuantityOnHandBetweenDates(product, location, startDate, endDate)
-        data = data.collect {
-            [
-                    it[0].time, // time in milliseconds
-                    it[3]       // quantity on hand
-            ]
+        def today = new Date()
+        today.clearTime()
+
+
+        if (numMonths >= 24) {
+            use(groovy.time.TimeCategory) {
+                numMonths.times { i ->
+                    dates << (today - i.months)
+                }
+            }
+            format = "yyyy"
+        } else if (numMonths > 12) {
+            use(groovy.time.TimeCategory) {
+                numMonths.times { i ->
+                    dates << (today - i.months)
+                }
+            }
+            format = "MMM-yy"
+        } else if (numMonths >= 6) {
+            use(groovy.time.TimeCategory) {
+                numMonths.times { i ->
+                    dates << (today - i.months)
+                }
+            }
+            format = "MMM-yy"
+        } else if (numMonths >= 2) {
+            use(groovy.time.TimeCategory) {
+                (numMonths * 4).times { i ->
+                    dates << (today - i.weeks)
+                }
+            }
+            format = "'wk' w"
+        } else {
+            use(groovy.time.TimeCategory) {
+                (numMonths * 21).times { i ->
+                    dates << (today - i.days)
+                }
+            }
+            format = "dd-MMM"
+        }
+        log.info "dates: " + dates
+        dates = dates.sort()
+        log.info "dates sorted: " + dates
+
+        // initialize data
+        def data = dates.inject([:].withDefault {
+            [label: null, date: null, days: 0, totalQuantity: 0, maxQuantity: 0, month: 0, year: 0, day: 0]
+        }) { map, date ->
+            def dateKey = date.format(format)
+            map[dateKey].label = dateKey
+            map[dateKey].day = date.day
+            map[dateKey].month = date.month
+            map[dateKey].year = date.year
+            map[dateKey].totalQuantity = 0
+            map[dateKey].maxQuantity = 0
+            map[dateKey].days = 0
+            map
         }
 
-        render([data: data] as JSON)
+        log.info "Data initialized " + data
+        log.info "Inventory snapshots between " + dates[0] + " " + dates[dates.size() - 1]
+
+        def inventorySnapshots = InventorySnapshot.createCriteria().list() {
+            eq("product", product)
+            eq("location", location)
+            between("date", dates[0], dates[dates.size() - 1])
+            order("date", "asc")
+        }
+
+        def newData = []
+        log.info "dates: " + dates
+        log.info "inventorySnapshots: " + inventorySnapshots*.date
+        if (inventorySnapshots) {
+            def items = inventorySnapshots.collect {
+                [date: it.date, quantityOnHand: it.quantityOnHand]
+            }
+            items.sort { it.date }.each { item ->
+                def dateKey = item.date.format(format)
+                data[dateKey].date = item.date
+                data[dateKey].label = dateKey
+                data[dateKey].month = item.date.month
+                data[dateKey].day = item.date.day
+                data[dateKey].year = item.date.year
+                data[dateKey].totalQuantity += item.quantityOnHand
+                if (item.quantityOnHand > data[dateKey].maxQuantity) {
+                    data[dateKey].maxQuantity = item.quantityOnHand
+                }
+                data[dateKey].days++
+                data
+            }
+
+
+            data.each { key, value ->
+                log.info "KEY: " + key
+                log.info "VALUE: " + value
+                if (value.days) {
+                    newData << [key, (value.maxQuantity)]
+                } else {
+                    newData << [key, 0]
+                }
+            }
+        }
+        log.info "newData: " + newData
+
+
+        render([label: "${product?.name}", location: "${location.name}", data: newData] as JSON)
     }
 
     def getFastMovers = {
@@ -1331,21 +1430,9 @@ class JsonController {
     def getTransactionReport = { TransactionReportCommand command ->
         String locationId = params?.location?.id ?: session?.warehouse?.id
         Location location = Location.get(locationId)
-        String categoryId = params.category ?: "ROOT"
-        Category category = Category.get(categoryId)
 
         Date startDate = command.startDate
         Date endDate = command.endDate
-
-        Boolean includeCategoryChildren = params.includeCategoryChildren
-        List<Category> categories = []
-
-        if (includeCategoryChildren) {
-            categories = category.children
-            categories << category
-        } else {
-            categories << category
-        }
 
         // FIXME Command validation not working so we're doing it manually
 
@@ -1412,7 +1499,7 @@ class JsonController {
         products.addAll(balanceClosingMap.keySet())
 
         // Flatten the data to make it easier to display
-        def data = products.findAll { categories.contains(it.category) }.collect { Product product ->
+        def data = products.collect { Product product ->
 
             // Get balances by product
             def balanceOpening = balanceOpeningMap.get(product) ?: 0
@@ -1442,14 +1529,13 @@ class JsonController {
             [
                     "Code"           : product.productCode,
                     "Name"           : product.name,
-                    "Category": product.category.name,
-                    "Unit cost": product.pricePerUnit ?: '',
                     "Cycle Count"    : cycleCountOccurred ? true : "",
                     "Opening Balance": balanceOpening,
                     "Inbound"        : quantityInbound,
                     "Outbound"       : quantityOutbound,
                     "Adjustments"    : quantityDiscrepancy,
                     "Closing Balance": balanceClosing,
+
             ]
         }
 
@@ -1468,7 +1554,7 @@ class JsonController {
         def triggers = quartzScheduler.getTriggersOfJob(new JobKey("org.pih.warehouse.jobs.RefreshTransactionFactJob"))
         def nextFireTime = triggers*.nextFireTime.max()
         def locationKey = LocationDimension.findByLocationId(session.warehouse.id)
-        //org.pih.warehouse.reporting.TransactionFact.maxTransactionDate.list()
+        //TransactionFact.maxTransactionDate.list()
         def model = [
                 locationKey       : locationKey,
                 transactionCount  : TransactionFact.countByLocationKey(locationKey),

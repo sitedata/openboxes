@@ -19,17 +19,21 @@ import org.pih.warehouse.report.ChecklistReportCommand
 import org.pih.warehouse.report.InventoryReportCommand
 import org.pih.warehouse.report.MultiLocationInventoryReportCommand
 import org.pih.warehouse.report.ProductReportCommand
+import org.pih.warehouse.core.Location
+import org.pih.warehouse.inventory.Transaction
 import org.quartz.impl.StdScheduler
 import util.ReportUtil
 
 class ReportController {
 
     def documentService
+    def dataService
     def inventoryService
     def productService
     def reportService
     def messageService
     def inventorySnapshotService
+    StdScheduler quartzScheduler
 
     def refreshTransactionFact = {
         RefreshTransactionFactJob.triggerNow([:])
