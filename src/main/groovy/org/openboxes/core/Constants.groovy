@@ -97,19 +97,6 @@ class Constants {
     static final String DEFAULT_COLUMN_SEPARATOR = ","
     static final String DEFAULT_LINE_SEPARATOR = "\n"
 
-    // Characters that should be included with each of the random number types
-    static final String RANDOM_IDENTIFIER_ALPHABETIC_CHARACTERS = "ABCDEFGHJKMNPQRSTUVXYZ"
-    static final String RANDOM_IDENTIFIER_ALPHANUMERIC_CHARACTERS = "0123456789ABCDEFGHJKMNPQRSTUVWXYZ"
-    static final String RANDOM_IDENTIFIER_NUMERIC_CHARACTERS = "0123456789"
-
-    // Default random number formats
-    static final String DEFAULT_ORDER_NUMBER_FORMAT = "NNNLLL"
-    static final String DEFAULT_PRODUCT_NUMBER_FORMAT = "LLNN"
-    static final String DEFAULT_REQUISITION_NUMBER_FORMAT = "NNNLLL"
-    static final String DEFAULT_SHIPMENT_NUMBER_FORMAT = "NNNLLL"
-    static final String DEFAULT_RECEIPT_NUMBER_FORMAT = "NNNLLL"
-    static final String DEFAULT_TRANSACTION_NUMBER_FORMAT = "AAA-AAA-AAA"
-
     static final String TRACKING_NUMBER_TYPE_ID = "10"
 
     static final String DEFAULT_RECEIVING_LOCATION_PREFIX = "R"
