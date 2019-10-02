@@ -14,7 +14,7 @@ import org.pih.warehouse.core.*
 import org.pih.warehouse.inventory.TransactionCode
 import org.pih.warehouse.inventory.TransactionEntry
 import org.pih.warehouse.shipping.ShipmentStatusCode
-import org.pih.warehouse.util.DateUtil
+import org.pih.warehouse.DateUtil
 import org.pih.warehouse.auth.AuthService
 import org.pih.warehouse.core.Location
 import org.pih.warehouse.core.Person
