@@ -13,7 +13,7 @@ import org.apache.commons.mail.ByteArrayDataSource
 import org.apache.commons.mail.EmailAttachment
 import org.apache.commons.mail.HtmlEmail
 import org.apache.commons.mail.SimpleEmail
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import grails.util.Holders
 
 import javax.mail.internet.InternetAddress
 
@@ -22,34 +22,34 @@ class MailService {
     boolean transactional = false
     def userService
     def grailsApplication
-    def config = ConfigurationHolder.config
+    def config = Holders.getConfig()
 
     String getDefaultFrom() {
-        return config.grails.mail.from
+        return config.getProperty("grails.mail.from")
     }
 
     String getDefaultHost() {
-        return config.grails.mail.host
+        return config.getProperty("rails.mail.host")
     }
 
     Integer getDefaultPort() {
-        Integer.parseInt(config.grails.mail.port)
+        Integer.parseInt(config.getProperty("grails.mail.port"))
     }
 
     String getUsername() {
-        return config.grails.mail.username
+        return config.getProperty("grails.mail.username")
     }
 
     String getPassword() {
-        return config.grails.mail.password
+        return config.getProperty("grails.mail.password")
     }
 
     Boolean getDebug() {
-        return config.grails.mail.debug
+        return config.getProperty("grails.mail.debug")
     }
 
     String getPrefix() {
-        return config.grails.mail.prefix
+        return config.getProperty("grails.mail.prefix")
     }
 
 
