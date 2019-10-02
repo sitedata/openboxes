@@ -9,7 +9,7 @@
  **/
 package org.pih.warehouse.core
 
-import org.codehaus.groovy.grails.commons.ApplicationHolder
+import grails.util.Holders
 import org.codehaus.groovy.grails.commons.DefaultGrailsDomainClass
 import org.docx4j.TextUtils
 import org.docx4j.XmlUtils
@@ -39,9 +39,9 @@ class FileService {
 
     File findFile(String filePath) {
         def file
-        def appContext = ApplicationHolder.application.parentContext
+        def appContext = Holders.getGrailsApplication().getParentContext()
         def archiveDirectory = filePath
-        if (ApplicationHolder.application.isWarDeployed()) {
+        if (Holders.getGrailsApplication().isWarDeployed()) {
             //archiveDirectory = "${File.separator}WEB-INF${File.separator}grails-app${File.separator}conf${File.separator}${filePath}"
             archiveDirectory = "classpath:$filePath"
             file = appContext.getResource(archiveDirectory)?.getFile()
