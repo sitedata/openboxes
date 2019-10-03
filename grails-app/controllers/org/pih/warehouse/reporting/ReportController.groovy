@@ -10,10 +10,7 @@
 package org.pih.warehouse.reporting
 
 import grails.converters.JSON
-import grails.plugin.springcache.annotations.CacheFlush
 import org.apache.commons.lang.StringEscapeUtils
-import org.pih.warehouse.core.Location
-import org.pih.warehouse.inventory.Transaction
 import org.pih.warehouse.RefreshTransactionFactJob
 import org.pih.warehouse.report.ChecklistReportCommand
 import org.pih.warehouse.report.InventoryReportCommand
@@ -334,7 +331,7 @@ class ReportController {
         }
     }
 
-    @CacheFlush(["binLocationReportCache", "binLocationSummaryCache"])
+    //@CacheFlush(["binLocationReportCache", "binLocationSummaryCache"])
     def clearBinLocationCache = {
         flash.message = "Cache have been flushed"
         redirect(action: "showBinLocationReport")
