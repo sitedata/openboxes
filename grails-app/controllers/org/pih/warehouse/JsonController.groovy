@@ -12,7 +12,7 @@ package org.pih.warehouse
 import grails.converters.JSON
 import grails.plugin.springcache.annotations.CacheFlush
 import grails.plugin.springcache.annotations.Cacheable
-import org.codehaus.groovy.grails.web.json.JSONObject
+import org.grails.web.json.JSONObject
 import org.pih.warehouse.core.*
 import org.pih.warehouse.core.Localization
 import org.pih.warehouse.core.Location
