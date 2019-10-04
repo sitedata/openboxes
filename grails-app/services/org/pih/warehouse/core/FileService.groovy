@@ -9,6 +9,7 @@
  **/
 package org.pih.warehouse.core
 
+import grails.core.GrailsApplication
 import grails.util.Holders
 import org.grails.core.DefaultGrailsDomainClass
 import org.docx4j.TextUtils
@@ -35,7 +36,8 @@ class FileService {
     boolean transactional = false
 
     def userService
-    def grailsApplication
+
+    GrailsApplication grailsApplication
 
     File findFile(String filePath) {
         def file
