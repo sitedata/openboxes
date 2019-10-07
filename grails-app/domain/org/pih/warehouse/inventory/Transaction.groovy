@@ -94,8 +94,8 @@ class Transaction implements Comparable, Serializable {
 
     Inventory inventory
 
-    LocalTransfer outboundTransfer
-    LocalTransfer inboundTransfer
+    //LocalTransfer outboundTransfer
+    //LocalTransfer inboundTransfer
 
     // Association mapping
     static hasMany = [transactionEntries: TransactionEntry]
