@@ -24,7 +24,7 @@ class DateTagLib {
     }
 
     def formatDate = { attrs, body ->
-        def formatTagLib = grailsApplication.mainContext.getBean('org.codehaus.groovy.grails.plugins.web.taglib.FormatTagLib')
+        def formatTagLib = grailsApplication.mainContext.getBean('org.grails.plugins.web.taglib.FormatTagLib')
 
         def today = new Date()
         if (!attrs.format) {
