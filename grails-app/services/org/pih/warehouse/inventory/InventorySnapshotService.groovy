@@ -470,7 +470,7 @@ class InventorySnapshotService {
             def results = InventorySnapshot.executeQuery("""
 						select 
 						    iis.product, 
-						    ii,
+						    iis.inventoryItem,
 						    iis.binLocation,
 						    sum(iis.quantityOnHand)
 						from InventorySnapshot iis
@@ -478,7 +478,7 @@ class InventorySnapshotService {
 						left outer join iis.binLocation bl
 						where iis.location = :location
 						and iis.date = :date
-						group by iis.product, iis.location, iis.binLocation
+						group by iis.product, iis.inventoryItem, iis.binLocation
 						""", [location: location, date: date])
             //data = results
             data = results.collect {
