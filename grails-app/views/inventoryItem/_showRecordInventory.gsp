@@ -71,9 +71,6 @@
                                 <g:set var="styleClass" value="${params?.inventoryItem?.id && recordInventoryRow?.id == params?.inventoryItem?.id ? 'selected-row' : ''}"/>
                                 <tr class="${styleClass} ${status%2==0?'odd':'even'}">
                                     <td>
-                                        <g:hiddenField
-                                                name="recordInventoryRows[${status}].binLocation.id"
-                                                value="${recordInventoryRow?.binLocation?.id}"/>
                                         <g:selectBinLocation class="chzn-select-readonly"
                                                              name="recordInventoryRows[${status}].binLocation.id"
                                                              value="${recordInventoryRow?.binLocation?.id }" noSelection="['':'']"/>
