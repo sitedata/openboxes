@@ -53,7 +53,7 @@
                     </div>
                     <div class="action-menu-item">
                         <g:link controller="document" action="buildZebraTemplate" id="${template.id}" params="['inventoryItem.id': itemInstance?.id]" target="_blank">
-                            <img src="${createLinkTo(dir: 'images/icons/silk', file: 'brick.png')}"/>&nbsp;
+                            <img src="${resource(dir: 'images/icons/silk', file: 'brick.png')}"/>&nbsp;
                             <g:message code="default.build.label" args="[template.name]"/>
                         </g:link>
                     </div>

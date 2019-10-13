@@ -10,12 +10,12 @@
     <g:isSuperuser>
         <g:link controller="report" action="refreshTransactionFact" class="button"
                 onclick="return confirm('${warehouse.message(code: 'default.button.delete.confirm.message', default: 'Are you sure?')}');">
-            <img src="${createLinkTo(dir:'images/icons/silk',file:'reload.png')}" />
+            <img src="${resource(dir:'images/icons/silk',file:'reload.png')}" />
             ${message(code:"default.button.refresh.label")} ${message(code:"default.data.label")}
         </g:link>
     </g:isSuperuser>
     <a href="javascript:void(-1);" class="btn-close-dialog button">
-        <img src="${createLinkTo(dir:'images/icons/silk',file:'accept.png')}" />
+        <img src="${resource(dir:'images/icons/silk',file:'accept.png')}" />
         ${message(code:"default.button.close.label")}
     </a>
 </div>

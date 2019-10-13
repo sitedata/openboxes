@@ -69,7 +69,7 @@
                                    data-position="top"
                                    data-title="${g.message(code:'productSupplier.label')}"
                                    data-url="${request.contextPath}/productSupplier/dialog?id=${productSupplier?.id}&product.id=${productInstance?.id}">
-                                    <img src="${createLinkTo(dir:'images/icons/silk', file:'pencil.png')}" />
+                                    <img src="${resource(dir:'images/icons/silk', file:'pencil.png')}" />
                                     <g:message code="default.button.edit.label"/>
                                 </a>
                             </td>

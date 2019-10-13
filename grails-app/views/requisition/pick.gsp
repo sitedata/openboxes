@@ -3,8 +3,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <meta name="layout" content="custom" />
-<script src="${createLinkTo(dir:'js/knockout/', file:'knockout-2.2.0.js')}" type="text/javascript"></script>
-<script src="${createLinkTo(dir:'js/', file:'requisition.js')}" type="text/javascript"></script>
+<script src="${resource(dir:'js/knockout/', file:'knockout-2.2.0.js')}" type="text/javascript"></script>
+<script src="${resource(dir:'js/', file:'requisition.js')}" type="text/javascript"></script>
 <title><warehouse:message code="requisition.process.label" /></title>
 <style>
 	tr.selected-top { border-top: 5px solid #f3961c; border-right: 5px solid #f3961c; border-left: 5px solid #f3961c; }
@@ -20,7 +20,7 @@
 				${flash.message}
 			</div>
 		</g:if>
-		
+
 		<g:render template="summary" model="[requisition:requisition]"/>
 
 		<div class="yui-gf">
@@ -429,7 +429,7 @@
                 </div>
 			</div>
 		</div>
-	    	
+
 <script type="text/javascript">
 	$(document).ready(function() {
 
@@ -444,8 +444,8 @@
         $(".tabs li").removeClass('ui-corner-top').addClass('ui-corner-left');
 
         $("#accordion").accordion({
-          header: ".accordion-header", 
-          icons: false, 
+          header: ".accordion-header",
+          icons: false,
           active:false,
           collapsible: true,
           heightStyle: "content"
@@ -458,7 +458,7 @@
         });
 
         $(".quantity-picked input").keyup(function(){
-           this.value=this.value.replace(/[^\d]/,'');      
+           this.value=this.value.replace(/[^\d]/,'');
            $(this).trigger("change");//Safari and IE do not fire change event for us!
         });
 
@@ -504,14 +504,14 @@
 		select: function(event, ui) {
 			console.log(ui.item);
 			$("#substitutionItemDetails").show();
-			
+
 			var expirationDate = new Date(ui.item.expirationDate)
 			var expirationDateString = expirationDate.getMonth()+1 + "/" + expirationDate.getDate() + "/" + expirationDate.getFullYear()
 			$("#productId").val(ui.item.productId);
 			$("#productName").text(ui.item.productName);
 			$("#inventoryItemId").val(ui.item.id);
 			$("#lotNumber").val(ui.item.lotNumber);
-			
+
 			$("#lotNumberText").text(ui.item.lotNumber);
 			$("#expirationDateText").text(expirationDateString);
 			$("#maxQuantityText").text(ui.item.quantity);

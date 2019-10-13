@@ -105,7 +105,7 @@
                                             </g:if>
                                             <p>
                                                 <g:if test="${isSubstitution}">
-                                                    <img src="${createLinkTo(dir:'images/icons',file:'indent.gif')}" />
+                                                    <img src="${resource(dir:'images/icons',file:'indent.gif')}" />
                                                 </g:if>
                                                 ${picklistItem?.inventoryItem?.product?.productCode}
                                                 ${picklistItem?.inventoryItem?.product?.name }
@@ -180,8 +180,8 @@
                     </tbody>
                 </table>
             </div>
-			<div class="clear"></div>	
-			
+			<div class="clear"></div>
+
 			<div class="buttons center">
                 <g:link controller="requisition" action="pick" id="${requisition.id }" class="button icon arrowleft">
                     <warehouse:message code="default.button.back.label"/>
@@ -190,12 +190,12 @@
                     <warehouse:message code="default.button.next.label"/>
                 </g:link>
 			</div>
-					
+
 		</div>
     </div>
-	
-	
-	
+
+
+
 </div>
 </body>
 </html>
