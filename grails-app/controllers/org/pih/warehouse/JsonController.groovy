@@ -560,7 +560,6 @@ class JsonController {
     }
 
     def getQuantity = {
-        log.info params
         def quantity = 0
         def location = Location.get(session.warehouse.id)
         def lotNumber = (params.lotNumber) ? (params.lotNumber) : ""
@@ -605,7 +604,6 @@ class JsonController {
      * Ajax method for the Record Inventory page.
      */
     def getInventoryItems = {
-        log.info params
         def productInstance = Product.get(params?.product?.id)
         def inventoryItemList = inventoryService.getInventoryItemsByProduct(productInstance)
         render inventoryItemList as JSON
@@ -616,7 +614,6 @@ class JsonController {
      * Returns inventory items for the given location, lot number, and product.
      */
     def findInventoryItems = {
-        log.info params
         long startTime = System.currentTimeMillis()
         def inventoryItems = []
         def location = Location.get(session.warehouse.id)
@@ -689,7 +686,6 @@ class JsonController {
     }
 
     def findLotsByName = {
-        log.info params
         // Constrain by product id if the productId param is passed in
         def items = new TreeSet()
         if (params.term) {
@@ -1234,7 +1230,6 @@ class JsonController {
      * Stock Card > Snapshot graph
      */
     def getQuantityOnHandByMonth = {
-        log.info params
         def dates = []
         def format = "MMM-yy"
         def numMonths = (params.numMonths as int) ?: 12
