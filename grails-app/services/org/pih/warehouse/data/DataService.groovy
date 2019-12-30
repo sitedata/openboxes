@@ -28,6 +28,7 @@ import org.pih.warehouse.inventory.InventoryStatus
 import org.pih.warehouse.product.Category
 import org.pih.warehouse.product.Product
 import org.pih.warehouse.product.ProductPackage
+import org.pih.warehouse.requisition.RequisitionStatus
 
 import java.text.SimpleDateFormat
 
@@ -621,7 +622,7 @@ class DataService {
      * @return
      */
     String exportRequisitions(requisitions) {
-        def formatDate = new SimpleDateFormat("dd/MMM/yyyy hh:mm:ss")
+        def formatDate = new SimpleDateFormat("MMM dd, yyyy")
         def sw = new StringWriter()
 
         def csvWriter = new CSVWriter(sw, {
@@ -684,7 +685,7 @@ class DataService {
                     datePicked       : requisition?.picklist?.datePicked ? "${formatDate.format(requisition?.picklist?.datePicked)}" : "",
 
                     issuedBy         : requisition.issuedBy,
-                    dateIssued       : requisition.dateIssued ? "${formatDate.format(requisition.dateIssued)}" : "",
+                    dateIssued       : requisition.status == RequisitionStatus.ISSUED ? "${formatDate.format(requisition.shipment?.expectedShippingDate)}" : "",
 
                     receivedBy       : requisition.receivedBy,
                     dateReceived     : requisition.dateReceived ? "${formatDate.format(requisition.dateReceived)}" : "",
