@@ -122,6 +122,7 @@ class StockMovement {
                         shipments  : requisition?.shipments?.collect {
                             [id: it?.id, shipmentNumber: it?.shipmentNumber, status: it?.currentStatus?.name()]
                         },
+                        order      : [id: order?.id],
                         documents  : documents
                 ],
         ]
@@ -183,6 +184,7 @@ class StockMovement {
             dateRequested: new Date(),
             requestedBy: order.orderedBy,
             description: order.name,
+            order: order,
             statusCode:"CREATED"
         )
 
@@ -222,7 +224,8 @@ class StockMovement {
                 driverName: shipment?.driverName,
                 trackingNumber: trackingNumber?.identifier,
                 currentStatus: shipment?.currentStatus,
-                stocklist: requisition?.requisitionTemplate
+                stocklist: requisition?.requisitionTemplate,
+                order: requisition?.order
         )
 
         // Include all requisition items except those that are substitutions or modifications because the
